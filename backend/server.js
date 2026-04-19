@@ -23,7 +23,7 @@ app.use(express.json()); // Permet de lire les données JSON envoyées dans le c
 app.use("/catways", catwayRoutes); // Toutes les routes catways commencent par /catways
 app.use("/users", userRoutes); // Toutes les routes utilisateurs commencent par /users
 app.use("/reservations", reservationRoutes); // Toutes les routes de réservation commencent par /reservations
-app.use("/", authRoutes); // Routes d'authentification (/login, /logout)
+app.use("/auth", authRoutes); // Routes d'authentification (/login, /logout)
 
 // Route de test pour vérifier que le serveur répond
 app.get("/", (req, res) => {

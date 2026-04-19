@@ -1,97 +1,89 @@
-// Importation du modèle User
 import User from "../models/User.js";
 import bcrypt from "bcrypt";
 
-// GET /users : Récupérer tous les utilisateurs
+/**
+ * GET /users
+ * Liste tous les utilisateurs enregistrés (sans leur mot de passe).
+ */
 export const getUsers = async (req, res) => {
   try {
-    // On récupère tous les utilisateurs en excluant le mot de passe pour la sécurité
     const users = await User.find().select("-password");
     res.status(200).json(users);
   } catch (err) {
-    res
-      .status(500)
-      .json({
-        message: "Erreur lors de la récupération des utilisateurs",
-        error: err.message,
-      });
+    res.status(500).json({
+      message: "Erreur lors de la récupération",
+      error: err.message,
+    });
   }
 };
 
-// GET /users/:id : Récupérer un utilisateur par son ID
+/**
+ * GET /users/:id
+ * Récupère un utilisateur par son EMAIL (utilisé comme identifiant métier).
+ */
 export const getUserById = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id).select("-password");
-    if (!user)
-      return res.status(404).json({ message: "Utilisateur non trouvé" });
+    const user = await User.findOne({ email: req.params.id }).select("-password");
+    if (!user) return res.status(404).json({ message: "Utilisateur non trouvé" });
     res.status(200).json(user);
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: "ID invalide ou erreur serveur", error: err.message });
+    res.status(500).json({ message: "Erreur serveur", error: err.message });
   }
 };
 
-// POST /users : Créer un nouvel utilisateur (Inscription)
+/**
+ * POST /users
+ * Enregistre un nouvel utilisateur avec hachage du mot de passe.
+ */
 export const createUser = async (req, res) => {
   const { username, email, password } = req.body;
   try {
-    // Hachage du mot de passe avant stockage
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const newUser = new User({
-      username,
-      email,
-      password: hashedPassword,
-    });
-
+    const newUser = new User({ username, email, password: hashedPassword });
     await newUser.save();
-    // On retourne l'utilisateur créé sans son mot de passe
+
     const userResponse = newUser.toObject();
     delete userResponse.password;
-
     res.status(201).json(userResponse);
   } catch (err) {
-    res
-      .status(400)
-      .json({
-        message: "Erreur lors de la création de l'utilisateur",
-        error: err.message,
-      });
+    res.status(400).json({
+      message: "Erreur lors de la création",
+      error: err.message,
+    });
   }
 };
 
-// PUT /users/:id : Modifier un utilisateur
+/**
+ * PUT /users/:id
+ * Met à jour les informations d'un utilisateur (y compris le mot de passe si fourni).
+ */
 export const updateUser = async (req, res) => {
   try {
-    // Si le mot de passe est modifié, il faut le re-hacher (logique simplifiée ici)
     const updates = req.body;
     if (updates.password) {
       const salt = await bcrypt.genSalt(10);
       updates.password = await bcrypt.hash(updates.password, salt);
     }
 
-    const user = await User.findByIdAndUpdate(req.params.id, updates, {
-      new: true,
-    }).select("-password");
-    if (!user)
-      return res.status(404).json({ message: "Utilisateur non trouvé" });
+    const user = await User.findOneAndUpdate({ email: req.params.id }, updates, { new: true }).select("-password");
+    if (!user) return res.status(404).json({ message: "Utilisateur non trouvé" });
     res.status(200).json(user);
   } catch (err) {
-    res
-      .status(400)
-      .json({ message: "Erreur lors de la mise à jour", error: err.message });
+    res.status(400).json({ message: "Erreur de mise à jour", error: err.message });
   }
 };
 
-// DELETE /users/:id : Supprimer un utilisateur
+/**
+ * DELETE /users/:id
+ * Supprime un utilisateur par son email.
+ */
 export const deleteUser = async (req, res) => {
   try {
-    const user = await User.findByIdAndDelete(req.params.id);
-    if (!user)
-      return res.status(404).json({ message: "Utilisateur non trouvé" });
-    res.status(200).json({ message: "Utilisateur supprimé avec succès" });
+    const user = await User.findOneAndDelete({ email: req.params.id });
+    if (!user) return res.status(404).json({ message: "Utilisateur non trouvé" });
+    res.status(200).json({ message: "Utilisateur supprimé" });
   } catch (err) {
     res.status(500).json({ message: "Erreur serveur", error: err.message });
   }

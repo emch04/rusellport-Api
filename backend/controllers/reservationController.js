@@ -1,8 +1,10 @@
 import Reservation from "../models/Reservation.js";
 import Catway from "../models/Catway.js";
 
-// GET /reservations
-// Récupère la liste de toutes les réservations
+/**
+ * GET /reservations
+ * Récupère la liste de toutes les réservations.
+ */
 export const getReservations = async (req, res) => {
   try {
     const reservations = await Reservation.find();
@@ -15,8 +17,10 @@ export const getReservations = async (req, res) => {
   }
 };
 
-// GET /reservations/:id
-// Récupère une réservation spécifique par son identifiant unique (_id)
+/**
+ * GET /reservations/:id
+ * Récupère une réservation par son identifiant unique.
+ */
 export const getReservationById = async (req, res) => {
   try {
     const reservation = await Reservation.findById(req.params.id);
@@ -31,89 +35,87 @@ export const getReservationById = async (req, res) => {
   }
 };
 
-// POST /reservations
-// Crée une nouvelle réservation dans la base de données
+/**
+ * POST /reservations
+ * Crée une nouvelle réservation avec vérification de disponibilité du catway.
+ */
 export const createReservation = async (req, res) => {
   try {
     const { catwayNumber, startDate, endDate } = req.body;
 
-    // Validation de la cohérence des dates
+    // Vérifie que les dates sont cohérentes
     if (new Date(startDate) >= new Date(endDate)) {
       return res.status(400).json({
         message: "La date de fin doit être strictement après la date de début.",
       });
     }
 
-    // Vérification de l'existence du catway avant réservation
+    // Vérifie que le catway existe
     const catwayExists = await Catway.findOne({ catwayNumber });
     if (!catwayExists) {
-      return res
-        .status(404)
-        .json({ message: "Le numéro de catway spécifié n'existe pas." });
+      return res.status(404).json({ message: "Le numéro de catway n'existe pas." });
     }
-    // Vérification de la disponibilité du catway pour les dates demandées
-    // On cherche s'il existe une réservation pour ce catway qui chevauche la période demandée
-    const overlappingReservation = await Reservation.findOne({
+
+    // Vérifie les chevauchements de dates pour ce catway
+    const overlapping = await Reservation.findOne({
       catwayNumber,
       $or: [
-        {
-          startDate: { $lt: new Date(endDate) },
-          endDate: { $gt: new Date(startDate) },
-        }, // Nouvelle réservation chevauche une existante
-        { startDate: { $gte: new Date(startDate), $lt: new Date(endDate) } }, // Début de la nouvelle réservation est dans une existante
-        { endDate: { $gt: new Date(startDate), $lte: new Date(endDate) } }, // Fin de la nouvelle réservation est dans une existante
+        { startDate: { $lt: new Date(endDate) }, endDate: { $gt: new Date(startDate) } }
       ],
     });
 
-    if (overlappingReservation) {
+    if (overlapping) {
       return res.status(409).json({
-        message: "Le catway est déjà réservé pour une partie de ces dates.",
+        message: "Le catway est déjà réservé pour cette période.",
       });
     }
 
-    // Si tout est bon, créer la nouvelle réservation
     const newReservation = new Reservation(req.body);
     await newReservation.save();
     res.status(201).json(newReservation);
   } catch (err) {
     res.status(400).json({
-      message: "Erreur lors de la création de la réservation",
+      message: "Erreur lors de la création",
       error: err.message,
     });
   }
 };
 
-// PUT /reservations/:id
-// Met à jour les informations d'une réservation existante
+/**
+ * PUT /reservations/:id
+ * Modifie une réservation existante.
+ */
 export const updateReservation = async (req, res) => {
   try {
     const reservation = await Reservation.findByIdAndUpdate(
       req.params.id,
       req.body,
-      { new: true }, // Cette option permet de renvoyer l'objet après modification
+      { new: true }
     );
     if (!reservation)
       return res.status(404).json({ message: "Réservation non trouvée" });
     res.status(200).json(reservation);
   } catch (err) {
     res.status(400).json({
-      message: "Erreur lors de la mise à jour de la réservation",
+      message: "Erreur lors de la mise à jour",
       error: err.message,
     });
   }
 };
 
-// DELETE /reservations/:id
-// Supprime une réservation de la base de données
+/**
+ * DELETE /reservations/:id
+ * Supprime une réservation.
+ */
 export const deleteReservation = async (req, res) => {
   try {
     const reservation = await Reservation.findByIdAndDelete(req.params.id);
     if (!reservation)
       return res.status(404).json({ message: "Réservation non trouvée" });
-    res.status(200).json({ message: "Réservation supprimée avec succès" });
+    res.status(200).json({ message: "Réservation supprimée" });
   } catch (err) {
     res.status(500).json({
-      message: "Erreur lors de la suppression de la réservation",
+      message: "Erreur lors de la suppression",
       error: err.message,
     });
   }

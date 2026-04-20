@@ -17,11 +17,14 @@ connectDB();
 // Initialisation de l'application
 const app = express();
 
+// Indispensable pour que les cookies sécurisés (secure: true) fonctionnent derrière un proxy (Render, Heroku...)
+app.set("trust proxy", 1);
+
 // Middlewares globaux
 // Configuration CORS pour autoriser les cookies depuis l'origine de votre frontend
 app.use(
   cors({
-    origin: "http://localhost:3005", // URL de votre frontend
+    origin: process.env.FRONTEND_URL || "http://localhost:3005", // URL de votre frontend (locale ou en production)
     credentials: true,
   }),
 );
@@ -39,7 +42,7 @@ app.use(
       secure: process.env.NODE_ENV === "production", // En production, n'envoyer le cookie que sur HTTPS
       httpOnly: true, // Empêche l'accès au cookie via JavaScript côté client
       maxAge: 1000 * 60 * 60 * 24, // Durée de vie du cookie (ici, 1 jour)
-      sameSite: "lax", // Protection CSRF
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // "none" est requis si le front et le back sont sur des domaines différents
     },
   }),
 );

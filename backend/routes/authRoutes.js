@@ -31,8 +31,15 @@ router.post("/login", async (req, res) => {
     // Stockage des informations de l'utilisateur dans la session
     req.session.user = userData;
 
-    // Envoi des données utilisateur en réponse
-    res.json({ user: userData });
+    // Forcer la sauvegarde dans MongoDB AVANT de renvoyer la réponse au frontend
+    req.session.save((err) => {
+      if (err) {
+        return res
+          .status(500)
+          .json({ message: "Erreur lors de la sauvegarde de la session" });
+      }
+      res.json({ user: userData });
+    });
   } catch (error) {
     res
       .status(500)

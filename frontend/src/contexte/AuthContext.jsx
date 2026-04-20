@@ -13,25 +13,29 @@ export const AuthContext = createContext(null);
  * Gère la persistance de la session et les appels API liés à l'authentification.
  */
 export function AuthProvider({ children }) {
-  // État stockant les informations de l'utilisateur connecté
-  const [user, setUser] = useState(null);
-  // État indiquant si l'authentification est en cours de chargement (vérification du token)
+  // Initialisation à partir du localStorage pour éviter le flash au chargement
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem("user");
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
   const [loading, setLoading] = useState(true);
-  // État stockant les erreurs éventuelles liées à l'authentification
   const [error, setError] = useState(null);
 
-  /**
-   * Effet exécuté au premier montage de l'application.
-   * Il vérifie s'il existe une session active côté backend en appelant l'API.
-   * Cela permet de restaurer l'état de l'utilisateur après un rafraîchissement.
-   */
   useEffect(() => {
     const checkUserSession = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+
       try {
         const response = await api.get("/auth/profile");
         setUser(response.data.user);
+        localStorage.setItem("user", JSON.stringify(response.data.user));
       } catch (err) {
-        // Pas d'erreur à afficher, l'utilisateur n'est simplement pas connecté
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
         setUser(null);
       } finally {
         setLoading(false);
@@ -40,18 +44,16 @@ export function AuthProvider({ children }) {
     checkUserSession();
   }, []);
 
-  /**
-   * Fonction de connexion.
-   * @param {string} email - Email de l'utilisateur
-   * @param {string} password - Mot de passe
-   * @returns {Object} - Résultat de l'opération { success: boolean, error?: string }
-   */
   const login = useCallback(async (email, password) => {
     try {
       setError(null);
       const response = await api.post("/auth/login", { email, password });
-      const { user: userData } = response.data;
+      const { user: userData, token } = response.data;
 
+      // Sauvegarde du token et des infos
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(userData));
+      
       setUser(userData);
       return { success: true };
     } catch (err) {
@@ -61,18 +63,10 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
-  /**
-   * Fonction de déconnexion. Demande au backend de détruire la session.
-   */
   const logout = useCallback(async () => {
-    try {
-      // Demande au backend de détruire la session
-      await api.post("/auth/logout");
-    } catch (err) {
-      console.error("Erreur lors de la déconnexion:", err);
-    } finally {
-      setUser(null);
-    }
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setUser(null);
   }, []);
 
   /**

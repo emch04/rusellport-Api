@@ -38,12 +38,12 @@ app.use(
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
-    proxy: true, // Crucial pour Render
+    proxy: true,
     cookie: {
-      secure: process.env.NODE_ENV === "production",
+      secure: true, // Forcé à true pour HTTPS sur Render
       httpOnly: true,
       maxAge: 1000 * 60 * 60 * 24,
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      sameSite: "none", // Requis pour le cross-domain
     },
   }),
 );

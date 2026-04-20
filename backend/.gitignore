@@ -1,0 +1,12 @@
+# Dépendances Node.js
+node_modules/
+
+# Variables d'environnement (Sécurité critique)
+.env
+
+# Logs
+npm-debug.log*
+yarn-error.log*
+
+# Fichiers système
+.DS_Store

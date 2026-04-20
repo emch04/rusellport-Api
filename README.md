@@ -97,4 +97,4 @@ node seed.js
 
 ##  Auteur
 
-Projet développé par **EMCH** dans le cadre de la gestion du Port de Plaisance de Russell.
+Projet développé par **EMMANOUCH** dans le cadre de la gestion du Port de Plaisance de Russell.

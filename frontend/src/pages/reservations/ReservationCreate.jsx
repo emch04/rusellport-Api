@@ -8,7 +8,7 @@ import api from "../../services/api";
 import Loading from "../../components/common/Loading";
 import Alert from "../../components/common/Alert";
 // Importation des icônes de la librairie react-icons
-import { FaPlus, FaArrowLeft, FaSave } from "react-icons/fa";
+import { FaPlus, FaArrowLeft, FaSave, FaHome } from "react-icons/fa";
 
 /**
  * Page de création d'une nouvelle réservation.

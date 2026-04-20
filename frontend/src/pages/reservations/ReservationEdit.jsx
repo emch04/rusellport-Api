@@ -4,7 +4,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import api from "../../services/api";
 import Loading from "../../components/common/Loading";
 import Alert from "../../components/common/Alert";
-import { FaEdit, FaArrowLeft, FaSave } from "react-icons/fa";
+import { FaEdit, FaArrowLeft, FaSave, FaHome } from "react-icons/fa";
 
 /**
  * Composant de modification d'une réservation existante.

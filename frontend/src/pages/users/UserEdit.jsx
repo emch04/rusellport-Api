@@ -1,12 +1,12 @@
 // Importations
 // Importations des dépendances et composants
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import api from "../../services/api";
 import UserForm from "../../components/users/UserForm";
 import Loading from "../../components/common/Loading";
 import Alert from "../../components/common/Alert";
-import { FaUserEdit } from "react-icons/fa";
+import { FaUserEdit, FaHome } from "react-icons/fa";
 
 /**
  * Composant pour la modification d'un utilisateur existant.

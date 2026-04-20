@@ -11,6 +11,7 @@ import {
   FaEdit,
   FaTrash,
   FaEnvelope,
+  FaHome,
 } from "react-icons/fa";
 
 /**

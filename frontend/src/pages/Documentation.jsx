@@ -1,5 +1,7 @@
+// Importations
+import { Link } from "react-router-dom";
 // Importations des icônes
-import { FaBook, FaShip, FaCalendarAlt, FaUsers, FaLock } from "react-icons/fa";
+import { FaBook, FaShip, FaCalendarAlt, FaUsers, FaLock, FaHome } from "react-icons/fa";
 
 /**
  * Page statique présentant la documentation de l'API REST du port de plaisance.
@@ -372,6 +374,12 @@ function Documentation() {
             </table>
           </div>
         </div>
+      </div>
+
+      <div className="mt-4 hide-on-mobile">
+        <Link to="/dashboard" className="btn btn-secondary">
+          <FaHome /> Retour 
+        </Link>
       </div>
     </div>
   );

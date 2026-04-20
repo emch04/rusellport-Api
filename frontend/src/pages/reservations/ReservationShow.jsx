@@ -1,6 +1,6 @@
 // Importations
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import api from "../../services/api";
 import Loading from "../../components/common/Loading";
 import Alert from "../../components/common/Alert";
@@ -11,6 +11,7 @@ import {
   FaShip,
   FaUser,
   FaAnchor,
+  FaHome,
 } from "react-icons/fa";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";

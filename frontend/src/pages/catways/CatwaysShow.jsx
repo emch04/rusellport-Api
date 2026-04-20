@@ -1,10 +1,11 @@
 // Importations des hooks React et React Router
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import api from "../../services/api";
 import Loading from "../../components/common/Loading";
 import Alert from "../../components/common/Alert";
-import { FaShip, FaArrowLeft, FaEdit, FaCalendarPlus } from "react-icons/fa";
+import { FaShip, FaArrowLeft, FaEdit, FaCalendarPlus, FaHome } from "react-icons/fa";
 
 /**
  * Page de détails d'un Catway spécifique.

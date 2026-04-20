@@ -6,7 +6,7 @@ import Loading from "../../components/common/Loading";
 import Alert from "../../components/common/Alert";
 import EmptyState from "../../components/common/EmptyState";
 import Modal from "../../components/common/Modal";
-import { FaUsers, FaPlus, FaEye, FaEdit, FaTrash } from "react-icons/fa";
+import { FaUsers, FaPlus, FaEye, FaEdit, FaTrash, FaHome } from "react-icons/fa";
 
 /**
  * Page listant tous les utilisateurs (personnel de la capitainerie).
@@ -152,6 +152,12 @@ function UsersIndex() {
             />
           )}
         </div>
+      </div>
+
+      <div className="mt-4 hide-on-mobile">
+        <Link to="/dashboard" className="btn btn-secondary">
+          <FaHome /> Retour 
+        </Link>
       </div>
 
       {/* Modale de confirmation de suppression */}

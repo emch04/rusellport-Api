@@ -4,7 +4,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import api from "../../services/api";
 import Loading from "../../components/common/Loading";
 import Alert from "../../components/common/Alert";
-import { FaEdit, FaArrowLeft, FaSave, FaInfoCircle } from "react-icons/fa";
+import { FaEdit, FaArrowLeft, FaSave, FaInfoCircle, FaHome } from "react-icons/fa";
 
 /**
  * Composant d'édition d'un catway.

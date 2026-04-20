@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../../services/api";
 import Alert from "../../components/common/Alert";
-import { FaUserPlus, FaArrowLeft, FaSave } from "react-icons/fa";
+import { FaUserPlus, FaArrowLeft, FaSave, FaHome } from "react-icons/fa";
 
 /**
  * Composant permettant de créer un nouvel utilisateur avec validation du formulaire.

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../../services/api";
 import Alert from "../../components/common/Alert";
-import { FaPlus, FaArrowLeft, FaSave } from "react-icons/fa";
+import { FaPlus, FaArrowLeft, FaSave, FaHome } from "react-icons/fa";
 
 /**
  * Composant de création d'un nouveau Catway (emplacement de bateau).

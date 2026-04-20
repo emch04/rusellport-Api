@@ -34,15 +34,16 @@ app.use(express.json()); // Permet de lire les données JSON envoyées dans le c
 // Configuration des sessions
 app.use(
   session({
-    secret: process.env.SESSION_SECRET, // Clé secrète pour signer le cookie de session
-    resave: false, // Ne pas sauvegarder la session si elle n'est pas modifiée
-    saveUninitialized: false, // Ne pas créer de session pour les requêtes non authentifiées
-    store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }), // Stocker les sessions dans MongoDB
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
+    proxy: true, // Crucial pour Render
     cookie: {
-      secure: process.env.NODE_ENV === "production", // En production, n'envoyer le cookie que sur HTTPS
-      httpOnly: true, // Empêche l'accès au cookie via JavaScript côté client
-      maxAge: 1000 * 60 * 60 * 24, // Durée de vie du cookie (ici, 1 jour)
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // "none" est requis si le front et le back sont sur des domaines différents
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24,
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     },
   }),
 );

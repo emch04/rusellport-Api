@@ -1,3 +1,4 @@
+// Importations
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import api from "../../services/api";
@@ -7,11 +8,16 @@ import EmptyState from "../../components/common/EmptyState";
 import Modal from "../../components/common/Modal";
 import { FaShip, FaPlus, FaEye, FaEdit, FaTrash } from "react-icons/fa";
 
+/**
+ * Page principale listant tous les Catways du port.
+ */
 function CatwaysIndex() {
+  // États locaux
   const [catways, setCatways] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  // Modale de confirmation de suppression
   const [deleteModal, setDeleteModal] = useState({
     isOpen: false,
     catway: null,
@@ -22,6 +28,9 @@ function CatwaysIndex() {
     fetchCatways();
   }, []);
 
+  /**
+   * Effectue un appel API pour récupérer la liste complète des catways.
+   */
   const fetchCatways = async () => {
     try {
       setLoading(true);
@@ -34,12 +43,16 @@ function CatwaysIndex() {
     }
   };
 
+  /**
+   * Supprime un catway spécifique après confirmation de l'utilisateur.
+   */
   const handleDelete = async () => {
     if (!deleteModal.catway) return;
 
     try {
       await api.delete(`/catways/${deleteModal.catway.catwayNumber}`);
       setSuccess("Catway supprimé avec succès");
+      // Retire le catway supprimé de la liste affichée pour une mise à jour instantanée de l'UI
       setCatways(
         catways.filter(
           (c) => c.catwayNumber !== deleteModal.catway.catwayNumber,

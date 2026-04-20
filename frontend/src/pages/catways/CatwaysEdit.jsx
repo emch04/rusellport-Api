@@ -1,3 +1,4 @@
+// Importations
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import api from "../../services/api";
@@ -5,15 +6,22 @@ import Loading from "../../components/common/Loading";
 import Alert from "../../components/common/Alert";
 import { FaEdit, FaArrowLeft, FaSave, FaInfoCircle } from "react-icons/fa";
 
+/**
+ * Composant d'édition d'un catway.
+ * Conformément aux règles métiers, seul l'état ("catwayState") du catway peut être modifié,
+ * le numéro et le type étant fixes.
+ */
 function CatwayEdit() {
   const { id } = useParams();
   const navigate = useNavigate();
+  // États locaux
   const [catway, setCatway] = useState(null);
-  const [catwayState, setCatwayState] = useState("");
+  const [catwayState, setCatwayState] = useState(""); // Champ unique modifiable
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
 
+  // Charge les données du catway au montage
   useEffect(() => {
     fetchCatway();
   }, [id]);
@@ -22,6 +30,7 @@ function CatwayEdit() {
     try {
       const response = await api.get(`/catways/${id}`);
       setCatway(response.data);
+      // Pré-remplit la description de l'état
       setCatwayState(response.data.catwayState || "");
     } catch (err) {
       setError("Catway non trouvé");
@@ -30,6 +39,9 @@ function CatwayEdit() {
     }
   };
 
+  /**
+   * Soumet la modification de l'état du catway à l'API (Requête PUT).
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);

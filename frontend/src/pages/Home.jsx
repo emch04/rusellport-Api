@@ -1,3 +1,4 @@
+// Importations des hooks React et de React Router
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
@@ -74,6 +75,7 @@ function Home() {
 
   return (
     <div className="home-page">
+      {/* Section Héro (Bannière principale d'accueil) */}
       <section className="hero">
         <div className="container">
           <FaAnchor className="hero-icon" />
@@ -85,11 +87,13 @@ function Home() {
         </div>
       </section>
 
+      {/* Section du formulaire (Connexion / Inscription) */}
       <section className="login-section">
         <div className="container">
           <div className="card login-card fade-in">
             <div className="card-header">
               <h3>
+                {/* Titre dynamique selon le mode actif (Connexion ou Inscription) */}
                 {isLogin ? (
                   <>
                     <FaSignInAlt /> Connexion
@@ -102,9 +106,11 @@ function Home() {
               </h3>
             </div>
             <div className="card-body">
+              {/* Affichage des alertes d'erreur de connexion/inscription */}
               {error && (
                 <Alert type="danger" message={error} onClose={clearError} />
               )}
+              {/* Affichage du message de succès après création du compte */}
               {successMessage && (
                 <Alert
                   type="success"
@@ -113,7 +119,9 @@ function Home() {
                 />
               )}
 
+              {/* Formulaire gérant les deux modes de manière dynamique */}
               <form onSubmit={handleSubmit}>
+                {/* Champ "Nom d'utilisateur" affiché uniquement en mode inscription */}
                 {!isLogin && (
                   <div className="form-group">
                     <label className="form-label">Nom d'utilisateur</label>
@@ -128,6 +136,7 @@ function Home() {
                   </div>
                 )}
 
+                {/* Champ Email commun aux deux modes */}
                 <div className="form-group">
                   <label className="form-label">Adresse email</label>
                   <input
@@ -140,6 +149,7 @@ function Home() {
                   />
                 </div>
 
+                {/* Champ Mot de passe commun aux deux modes */}
                 <div className="form-group">
                   <label className="form-label">Mot de passe</label>
                   <input
@@ -152,6 +162,7 @@ function Home() {
                   />
                 </div>
 
+                {/* Bouton de soumission avec libellé et état de chargement dynamiques */}
                 <button
                   type="submit"
                   className="btn btn-primary btn-block btn-lg"
@@ -165,6 +176,7 @@ function Home() {
                 </button>
               </form>
 
+              {/* Bouton de bascule permettant de passer de la connexion à l'inscription (et inversement) */}
               <div className="text-center mt-3">
                 <button
                   className="btn btn-sm btn-secondary"
@@ -184,6 +196,7 @@ function Home() {
         </div>
       </section>
 
+      {/* Section présentant les fonctionnalités principales de l'application */}
       <section className="features">
         <div className="container">
           <div className="features-grid">
@@ -200,6 +213,7 @@ function Home() {
           </div>
         </div>
       </section>
+           
     </div>
   );
 }

@@ -1,11 +1,16 @@
+// Importations
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../../services/api";
 import Alert from "../../components/common/Alert";
 import { FaPlus, FaArrowLeft, FaSave } from "react-icons/fa";
 
+/**
+ * Composant de création d'un nouveau Catway (emplacement de bateau).
+ */
 function CatwayCreate() {
   const navigate = useNavigate();
+  // Initialisation des données du formulaire
   const [formData, setFormData] = useState({
     catwayNumber: "",
     catwayType: "",
@@ -14,11 +19,13 @@ function CatwayCreate() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // Met à jour l'état au fur et à mesure de la saisie
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Soumission du formulaire
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -27,6 +34,7 @@ function CatwayCreate() {
     try {
       // CORRECTION : Le backend (Catway.js) attend la propriété "type" et non "catwayType".
       // On re-mappe donc les données du formulaire avant l'envoi à l'API.
+      // "catwayNumber" doit également être converti en entier.
       await api.post("/catways", {
         catwayNumber: parseInt(formData.catwayNumber),
         type: formData.catwayType,

@@ -1,3 +1,4 @@
+// Importations des dépendances et composants
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
@@ -19,10 +20,15 @@ import {
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 
+/**
+ * Composant Dashboard (Tableau de bord).
+ * Fournit une vue d'ensemble des statistiques de l'application et les raccourcis.
+ */
 function Dashboard() {
   const { user } = useAuth();
-  const [stats, setStats] = useState({ catways: 0, reservations: 0, users: 0 });
-  const [currentReservations, setCurrentReservations] = useState([]);
+  // États stockant les différentes données nécessaires à l'affichage
+  const [stats, setStats] = useState({ catways: 0, reservations: 0, users: 0 }); // Compteurs globaux
+  const [currentReservations, setCurrentReservations] = useState([]); // Réservations actuellement en cours
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -37,21 +43,23 @@ function Dashboard() {
       // Exécution des requêtes API en parallèle via Promise.all pour optimiser drastiquement le temps de chargement global
       const [catwaysRes, reservationsRes, usersRes] = await Promise.all([
         api.get("/catways"),
-        api.get("/reservations"), // Route correcte pour toutes les réservations
+        api.get("/reservations"), // Route pour toutes les réservations
         api.get("/users"),
       ]);
 
+      // Extraction des données
       const catways = catwaysRes.data;
       const allReservations = reservationsRes.data || [];
       const users = usersRes.data;
 
+      // Mise à jour de l'état des statistiques (compteurs)
       setStats({
         catways: catways.length,
         reservations: allReservations.length,
         users: users.length,
       });
 
-      // Filtrer les réservations en cours
+      // Filtrer les réservations pour ne conserver que celles actuellement en cours (aujourd'hui inclus dans la période)
       const now = new Date();
       const current = allReservations.filter((res) => {
         const start = new Date(res.startDate);
@@ -70,6 +78,7 @@ function Dashboard() {
 
   if (loading) return <Loading />;
 
+  // Formatage de la date du jour en français (ex: "Mardi 12 Octobre 2023")
   const today = format(new Date(), "EEEE d MMMM yyyy", { locale: fr });
 
   return (

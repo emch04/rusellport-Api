@@ -103,33 +103,39 @@ function Dashboard() {
         {/* Statistiques */}
         <div className="dashboard-stats">
           <div className="stat-card fade-in">
-            <div className="stat-icon catways">
-              <FaShip />
-            </div>
-            <div className="stat-info">
-              <h3>{stats.catways}</h3>
-              <p>Catways</p>
-            </div>
+            <Link to="/catways" className="stat-link">
+              <div className="stat-icon catways">
+                <FaShip />
+              </div>
+              <div className="stat-info">
+                <h3>{stats.catways}</h3>
+                <p>Catways</p>
+              </div>
+            </Link>
           </div>
 
           <div className="stat-card fade-in">
-            <div className="stat-icon reservations">
-              <FaCalendarAlt />
-            </div>
-            <div className="stat-info">
-              <h3>{stats.reservations}</h3>
-              <p>Réservations</p>
-            </div>
+            <Link to="/reservations" className="stat-link">
+              <div className="stat-icon reservations">
+                <FaCalendarAlt />
+              </div>
+              <div className="stat-info">
+                <h3>{stats.reservations}</h3>
+                <p>Réservations</p>
+              </div>
+            </Link>
           </div>
 
           <div className="stat-card fade-in">
-            <div className="stat-icon users">
-              <FaUsers />
-            </div>
-            <div className="stat-info">
-              <h3>{stats.users}</h3>
-              <p>Utilisateurs</p>
-            </div>
+            <Link to="/users" className="stat-link">
+              <div className="stat-icon users">
+                <FaUsers />
+              </div>
+              <div className="stat-info">
+                <h3>{stats.users}</h3>
+                <p>Utilisateurs</p>
+              </div>
+            </Link>
           </div>
         </div>
 

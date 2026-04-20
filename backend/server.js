@@ -17,14 +17,27 @@ connectDB();
 // Initialisation de l'application
 const app = express();
 
-// Indispensable pour que les cookies sécurisés (secure: true) fonctionnent derrière un proxy (Render, Heroku...)
+// Indispensable pour Render (cookies sécurisés derrière un proxy)
 app.set("trust proxy", 1);
 
-// Middlewares globaux
-// Configuration CORS pour autoriser les cookies depuis l'origine de votre frontend
+// Configuration CORS flexible
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  "http://localhost:3005",
+  "http://localhost:5173"
+].filter(Boolean);
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:3005", // URL de votre frontend (locale ou en production)
+    origin: function (origin, callback) {
+      // Autorise les requêtes sans origine (comme Postman ou curl) 
+      // ou si l'origine est dans la liste autorisée
+      if (!origin || allowedOrigins.some(o => o.replace(/\/$/, "") === origin.replace(/\/$/, ""))) {
+        callback(null, true);
+      } else {
+        callback(new Error("Accès refusé par CORS"));
+      }
+    },
     credentials: true,
   }),
 );

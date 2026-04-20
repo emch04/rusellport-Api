@@ -41,9 +41,10 @@ router.post("/login", async (req, res) => {
       res.json({ user: userData });
     });
   } catch (error) {
+    // On renvoie le message d'erreur précis pour le diagnostic
     res
       .status(500)
-      .json({ message: "Erreur lors de la connexion", error: error.message });
+      .json({ message: "Erreur technique : " + error.message });
   }
 });
 

@@ -1,7 +1,6 @@
 // Importation des modules nécessaires
 import express from "express";
 import bcrypt from "bcrypt"; // Pour comparer les mots de passe hachés
-import jwt from "jsonwebtoken"; // Pour générer les tokens de session
 import User from "../models/User.js"; // Modèle de données Utilisateur
 
 // Initialisation du routeur Express
@@ -22,16 +21,18 @@ router.post("/login", async (req, res) => {
     if (!validPass)
       return res.status(401).json({ message: "Identifiants invalides" });
 
-    // Création du Token JWT contenant l'ID et l'email, valide pendant 1 jour
-    const token = jwt.sign({ id: user._id, email }, process.env.JWT_SECRET, {
-      expiresIn: "1d",
-    });
+    // Préparation des données utilisateur à stocker dans la session (sans le mot de passe)
+    const userData = {
+      id: user._id,
+      username: user.username,
+      email: user.email,
+    };
 
-    // Envoi de la réponse avec le token et les données utilisateur (hors mot de passe)
-    res.json({
-      token,
-      user: { id: user._id, username: user.username, email: user.email },
-    });
+    // Stockage des informations de l'utilisateur dans la session
+    req.session.user = userData;
+
+    // Envoi des données utilisateur en réponse
+    res.json({ user: userData });
   } catch (error) {
     res
       .status(500)
@@ -39,10 +40,28 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// Route GET /logout : Indique la déconnexion
-// Note : Le token étant stocké côté client, la déconnexion réelle se fait en supprimant le token du storage côté frontend.
-router.get("/logout", (req, res) => {
-  res.json({ message: "Déconnecté avec succès" });
+// Route GET /profile : Vérifie la session et renvoie les données de l'utilisateur
+router.get("/profile", (req, res) => {
+  if (req.session.user) {
+    // Si un utilisateur est trouvé dans la session, on le renvoie
+    res.json({ user: req.session.user });
+  } else {
+    // Sinon, on renvoie une erreur 401 (Non autorisé)
+    res.status(401).json({ message: "Non authentifié" });
+  }
+});
+
+// Route POST /logout : Détruit la session de l'utilisateur
+router.post("/logout", (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      return res.status(500).json({ message: "Erreur lors de la déconnexion" });
+    }
+    // Efface le cookie de session côté client
+    // 'connect.sid' est le nom par défaut du cookie de session
+    res.clearCookie("connect.sid");
+    res.json({ message: "Déconnecté avec succès" });
+  });
 });
 
 export default router;

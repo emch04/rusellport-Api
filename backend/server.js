@@ -2,6 +2,8 @@
 import express from "express";
 import dotenv from "dotenv"; // Gestion des variables d'environnement
 import cors from "cors"; // Autorisation des requêtes cross-origin
+import session from "express-session"; // Gestion des sessions
+import MongoStore from "connect-mongo"; // Stockage des sessions dans MongoDB
 import { connectDB } from "./config/db.js"; // Configuration de la base de données
 import catwayRoutes from "./routes/catwayRoutes.js"; // Routes pour les catways
 import userRoutes from "./routes/userRoutes.js"; // Routes pour les utilisateurs
@@ -16,8 +18,31 @@ connectDB();
 const app = express();
 
 // Middlewares globaux
-app.use(cors()); // Permet au frontend de communiquer avec le backend
+// Configuration CORS pour autoriser les cookies depuis l'origine de votre frontend
+app.use(
+  cors({
+    origin: "http://localhost:3005", // URL de votre frontend
+    credentials: true,
+  }),
+);
+
 app.use(express.json()); // Permet de lire les données JSON envoyées dans le corps (body) des requêtes
+
+// Configuration des sessions
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET, // Clé secrète pour signer le cookie de session
+    resave: false, // Ne pas sauvegarder la session si elle n'est pas modifiée
+    saveUninitialized: false, // Ne pas créer de session pour les requêtes non authentifiées
+    store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }), // Stocker les sessions dans MongoDB
+    cookie: {
+      secure: process.env.NODE_ENV === "production", // En production, n'envoyer le cookie que sur HTTPS
+      httpOnly: true, // Empêche l'accès au cookie via JavaScript côté client
+      maxAge: 1000 * 60 * 60 * 24, // Durée de vie du cookie (ici, 1 jour)
+      sameSite: "lax", // Protection CSRF
+    },
+  }),
+);
 
 // Définition des préfixes de routes
 app.use("/catways", catwayRoutes); // Toutes les routes catways commencent par /catways

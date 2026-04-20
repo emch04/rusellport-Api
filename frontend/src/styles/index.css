@@ -50,7 +50,7 @@ body {
   font-family: var(--font-family);
   line-height: 1.6;
   color: var(--white);
-  background: linear-gradient(50deg, #fc4668, #3f5efb);
+  background: linear-gradient(50deg, #080808, #321498);
   background-attachment: fixed;
 }
 
@@ -238,7 +238,10 @@ p {
     top: 100%;
     left: 0;
     right: 0;
-    background: linear-gradient(50deg, #fc4668, #3f5efb);
+    background: linear-gradient(50deg, #080808, #321498);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     flex-direction: column;
     padding: 1rem;
     gap: 0.25rem;
@@ -469,6 +472,12 @@ p {
   cursor: not-allowed;
 }
 
+/* Rendre l'icône native du calendrier (date picker) blanche sur les navigateurs WebKit */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
+}
+
 /* Personnalisation visuelle du menu déroulant (select) avec une icône de flèche personnalisée */
 .form-select {
   appearance: none;
@@ -489,6 +498,36 @@ p {
 textarea.form-control {
   min-height: 100px;
   resize: vertical;
+}
+
+/* Wrapper pour positionner l'icône dans le champ de mot de passe */
+.password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.pr-5 {
+  padding-right: 2.5rem !important; /* Laisse de l'espace pour l'icône afin que le texte ne passe pas dessous */
+}
+
+.password-toggle {
+  position: absolute;
+  right: 0.5rem;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+
+.password-toggle:hover {
+  color: var(--white);
 }
 
 /* ========== TABLES ========== */

@@ -1,16 +1,16 @@
-import axios from 'axios'
+import axios from "axios";
 
 /**
  * Configuration de l'instance Axios pour les appels API.
  * Le baseURL '/api' est redirigé vers le backend par le proxy de Vite.
  */
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: "/api",
   headers: {
-    'Content-Type': 'application/json'
+    "Content-Type": "application/json",
   },
-  withCredentials: true // Permet l'envoi des cookies de session si nécessaire
-})
+  withCredentials: true, // Permet l'envoi des cookies de session si nécessaire
+});
 
 /**
  * Intercepteur de réponse pour gérer globalement les erreurs.
@@ -19,14 +19,15 @@ const api = axios.create({
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      // Nettoyage des données de session en cas d'expiration du token
-      localStorage.removeItem('user')
-      localStorage.removeItem('token')
-      window.location.href = '/' // Redirection vers la page d'accueil/connexion
+    // Si le serveur renvoie un 401 (session expirée ou invalide)
+    // et que nous ne sommes pas déjà sur la page d'accueil,
+    // on redirige l'utilisateur vers la page de connexion.
+    if (error.response?.status === 401 && window.location.pathname !== "/") {
+      // La redirection déclenchera une ré-évaluation du AuthContext
+      window.location.href = "/";
     }
-    return Promise.reject(error)
-  }
-)
+    return Promise.reject(error);
+  },
+);
 
-export default api
+export default api;

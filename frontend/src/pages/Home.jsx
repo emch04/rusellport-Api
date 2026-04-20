@@ -11,6 +11,8 @@ import {
   FaUsersCog,
   FaSignInAlt,
   FaUserPlus,
+  FaEye,
+  FaEyeSlash,
 } from "react-icons/fa";
 
 /**
@@ -24,6 +26,7 @@ function Home() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false); // État de chargement du bouton de validation
+  const [showPassword, setShowPassword] = useState(false); // État pour afficher/masquer le mot de passe
   const [successMessage, setSuccessMessage] = useState(""); // Message affiché après une inscription réussie
 
   // Récupération des méthodes et variables du contexte d'authentification global
@@ -152,14 +155,28 @@ function Home() {
                 {/* Champ Mot de passe commun aux deux modes */}
                 <div className="form-group">
                   <label className="form-label">Mot de passe</label>
-                  <input
-                    type="password"
-                    className="form-control"
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
+                  <div className="password-wrapper">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      className="form-control pr-5"
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="password-toggle"
+                      onClick={() => setShowPassword(!showPassword)}
+                      title={
+                        showPassword
+                          ? "Masquer le mot de passe"
+                          : "Afficher le mot de passe"
+                      }
+                    >
+                      {showPassword ? <FaEyeSlash /> : <FaEye />}
+                    </button>
+                  </div>
                 </div>
 
                 {/* Bouton de soumission avec libellé et état de chargement dynamiques */}
@@ -213,7 +230,6 @@ function Home() {
           </div>
         </div>
       </section>
-           
     </div>
   );
 }

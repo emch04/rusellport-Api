@@ -22,19 +22,22 @@ export function AuthProvider({ children }) {
 
   /**
    * Effet exécuté au premier montage de l'application.
-   * Il vérifie si une session (token) est présente dans le localStorage 
-   * pour restaurer l'état de l'utilisateur après un rafraîchissement de la page.
+   * Il vérifie s'il existe une session active côté backend en appelant l'API.
+   * Cela permet de restaurer l'état de l'utilisateur après un rafraîchissement.
    */
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    const token = localStorage.getItem("token");
-
-    if (storedUser && token) {
-      setUser(JSON.parse(storedUser));
-      // Injection systématique du token dans les en-têtes des futures requêtes API
-      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-    }
-    setLoading(false);
+    const checkUserSession = async () => {
+      try {
+        const response = await api.get("/auth/profile");
+        setUser(response.data.user);
+      } catch (err) {
+        // Pas d'erreur à afficher, l'utilisateur n'est simplement pas connecté
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    checkUserSession();
   }, []);
 
   /**
@@ -47,14 +50,7 @@ export function AuthProvider({ children }) {
     try {
       setError(null);
       const response = await api.post("/auth/login", { email, password });
-      const { user: userData, token } = response.data;
-
-      // Persistance des données dans le localStorage
-      localStorage.setItem("user", JSON.stringify(userData));
-      localStorage.setItem("token", token);
-      
-      // Mise à jour de l'instance API pour inclure le nouveau token
-      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      const { user: userData } = response.data;
 
       setUser(userData);
       return { success: true };
@@ -66,20 +62,15 @@ export function AuthProvider({ children }) {
   }, []);
 
   /**
-   * Fonction de déconnexion.
-   * Nettoie le localStorage et réinitialise l'état de l'application.
+   * Fonction de déconnexion. Demande au backend de détruire la session.
    */
   const logout = useCallback(async () => {
     try {
-      // Notification optionnelle au backend pour la déconnexion
-      await api.get("/auth/logout");
+      // Demande au backend de détruire la session
+      await api.post("/auth/logout");
     } catch (err) {
       console.error("Erreur lors de la déconnexion:", err);
     } finally {
-      // Nettoyage impératif des données de session côté client
-      localStorage.removeItem("user");
-      localStorage.removeItem("token");
-      delete api.defaults.headers.common["Authorization"];
       setUser(null);
     }
   }, []);

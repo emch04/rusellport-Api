@@ -67,17 +67,22 @@ app.use(
   }),
 );
 
-// Définition des préfixes de routes
-app.use("/catways", catwayRoutes); // Toutes les routes catways commencent par /catways
-app.use("/users", userRoutes); // Toutes les routes utilisateurs commencent par /users
-app.use("/reservations", reservationRoutes); // Toutes les routes de réservation commencent par /reservations
-app.use("/auth", authRoutes); // Routes d'authentification (/login, /logout)
-
-// Service des fichiers statiques du frontend (Vite utilise 'dist')
+// 1. Service des fichiers statiques du frontend (doit être AVANT la route globale)
 app.use(express.static(path.join(__dirname, "..", "frontend", "dist")));
 
-// Route globale pour renvoyer l'index.html du frontend (pour le SPA routing)
-app.get(/^(?!\/auth|\/users|\/catways|\/reservations).*$/, (req, res) => {
+// 2. Définition des préfixes de routes API
+app.use("/catways", catwayRoutes);
+app.use("/users", userRoutes);
+app.use("/reservations", reservationRoutes);
+app.use("/auth", authRoutes);
+
+// 3. Route globale pour le SPA (renvoie index.html pour tout le reste)
+// On utilise une fonction pour exclure les fichiers statiques et l'API
+app.get("*", (req, res, next) => {
+  // Si la requête demande un fichier (ex: .js, .css) ou l'API, on passe au middleware suivant
+  if (req.url.startsWith("/catways") || req.url.startsWith("/users") || req.url.startsWith("/reservations") || req.url.startsWith("/auth") || req.url.includes(".")) {
+    return next();
+  }
   res.sendFile(path.join(__dirname, "..", "frontend", "dist", "index.html"));
 });
 

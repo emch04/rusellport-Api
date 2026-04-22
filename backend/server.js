@@ -4,11 +4,17 @@ import dotenv from "dotenv"; // Gestion des variables d'environnement
 import cors from "cors"; // Autorisation des requêtes cross-origin
 import session from "express-session"; // Gestion des sessions
 import MongoStore from "connect-mongo"; // Stockage des sessions dans MongoDB
+import path from "path";
+import { fileURLToPath } from "url";
 import { connectDB } from "./config/db.js"; // Configuration de la base de données
 import catwayRoutes from "./routes/catwayRoutes.js"; // Routes pour les catways
 import userRoutes from "./routes/userRoutes.js"; // Routes pour les utilisateurs
 import reservationRoutes from "./routes/reservationRoutes.js"; // Routes pour les réservations
 import authRoutes from "./routes/authRoutes.js"; // Routes pour l'authentification
+
+// Configuration de __dirname pour les modules ES
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Configuration initiale : chargement des variables d'environnement et connexion DB
 dotenv.config();
@@ -67,14 +73,12 @@ app.use("/users", userRoutes); // Toutes les routes utilisateurs commencent par 
 app.use("/reservations", reservationRoutes); // Toutes les routes de réservation commencent par /reservations
 app.use("/auth", authRoutes); // Routes d'authentification (/login, /logout)
 
-// Route de test pour vérifier que le serveur répond
-app.get("/", (req, res) => {
-  res.send("Bienvenue sur l'API du Port de Plaisance Russell!");
-});
+// Service des fichiers statiques du frontend (Vite utilise 'dist')
+app.use(express.static(path.join(__dirname, "..", "frontend", "dist")));
 
-// Middleware pour gérer les routes non trouvées (404)
-app.use((req, res, next) => {
-  res.status(404).json({ message: "Route non trouvée" });
+// Route globale pour renvoyer l'index.html du frontend (pour le SPA routing)
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "frontend", "dist", "index.html"));
 });
 
 // Middleware global de gestion des erreurs (Error Handler)

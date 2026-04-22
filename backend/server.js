@@ -77,7 +77,7 @@ app.use("/auth", authRoutes); // Routes d'authentification (/login, /logout)
 app.use(express.static(path.join(__dirname, "..", "frontend", "dist")));
 
 // Route globale pour renvoyer l'index.html du frontend (pour le SPA routing)
-app.get("(.*)", (req, res) => {
+app.get(/^(?!\/auth|\/users|\/catways|\/reservations).*$/, (req, res) => {
   res.sendFile(path.join(__dirname, "..", "frontend", "dist", "index.html"));
 });
 

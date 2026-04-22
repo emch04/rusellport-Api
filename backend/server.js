@@ -86,7 +86,7 @@ app.get("*", (req, res) => {
 app.use((err, req, res, next) => {
   console.error("Erreur détectée :", err.stack);
   res.status(500).json({
-    message: "Une erreur interne est survenue sur le serveur",
+    message: "Erreur interne (Vérification déploiement v2)",
     error: process.env.NODE_ENV === "development" ? err.message : {},
   });
 });

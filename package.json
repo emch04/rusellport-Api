@@ -2,6 +2,6 @@
   "name": "russell-port-root",
   "version": "1.0.0",
   "scripts": {
-    "build-all": "npm install --prefix frontend && npm run build --prefix frontend && npm install --prefix backend"
+    "build-all": "npm install --prefix frontend --include=dev && npm run build --prefix frontend && npm install --prefix backend"
   }
 }

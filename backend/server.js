@@ -77,8 +77,8 @@ app.use("/reservations", reservationRoutes);
 app.use("/auth", authRoutes);
 
 // 3. Route globale pour le SPA (renvoie index.html pour tout le reste)
-app.get("/:path*", (req, res, next) => {
-  // Si la requête demande l'API ou un fichier avec extension (ex: .js, .css), on passe
+app.use((req, res, next) => {
+  // Si la requête demande l'API ou un fichier avec extension (ex: .js, .css), on passe au middleware suivant
   if (req.url.startsWith("/catways") || 
       req.url.startsWith("/users") || 
       req.url.startsWith("/reservations") || 
@@ -86,6 +86,7 @@ app.get("/:path*", (req, res, next) => {
       req.url.includes(".")) {
     return next();
   }
+  // Sinon, on envoie l'index.html
   res.sendFile(path.join(__dirname, "..", "frontend", "dist", "index.html"));
 });
 

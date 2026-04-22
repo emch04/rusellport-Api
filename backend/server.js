@@ -67,8 +67,9 @@ app.use(
   }),
 );
 
-// 1. Service des fichiers statiques du frontend (doit être AVANT la route globale)
+// 1. Service des fichiers statiques du frontend
 app.use(express.static(path.join(__dirname, "..", "frontend", "dist")));
+app.use("/assets", express.static(path.join(__dirname, "..", "frontend", "dist", "assets")));
 
 // 2. Définition des préfixes de routes API
 app.use("/catways", catwayRoutes);
